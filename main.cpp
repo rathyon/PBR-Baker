@@ -18,11 +18,9 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-//const std::string hdrImagePath = "forest_cave_2k.hdr";
-
-#define ENVMAP_RES 512
-#define IRRADIANCEMAP_RES 32
-#define PREFILTERMAP_RES 128
+#define ENVMAP_RES 1024
+#define IRRADIANCEMAP_RES 128
+#define PREFILTERMAP_RES 512
 #define MAXMIPLEVELS 5
 
 void renderQuad();
@@ -159,8 +157,6 @@ void generateMaps(std::string filepath) {
                 unsigned int col = x * 3;
                 glm::vec3 texelData = glm::vec3(texData[row + col], texData[row + col + 1], texData[row + col + 2]);
                 envCubeMapDDS.store<glm::highp_u16vec3>({ x, y }, face, 0, gli::packHalf(texelData));
-
-                //envCubeMapDDS.store<glm::highp_u16vec3>({ y, ENVMAP_RES - 1 - x }, face, 0, gli::packHalf(glm::vec3(texData[y + x], texData[y + x + 1], texData[y + x + 2])));
             }
         }
         delete[] texData;
@@ -172,7 +168,6 @@ void generateMaps(std::string filepath) {
     }
     std::cout << "Environment Cubemap saved at: " << savefolder.string() + "/" + "env.dds" << std::endl;
 
-    /**/
     // Init Irradiance cubemap
     unsigned int irradianceMap;
     glGenTextures(1, &irradianceMap);
@@ -453,13 +448,6 @@ int main(int argc, char* argv[]) {
     for (const auto& entry : fs::directory_iterator(path)) {
         generateMaps(entry.path().string());
     }
-
-    /** /
-	while (!glfwWindowShouldClose(window)) {
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-    /**/
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
